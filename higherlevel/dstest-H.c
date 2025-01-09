@@ -20,12 +20,14 @@ FILE* menu();
 int Help();
 int List();
 int Quit();
+int Check();
 
 static tcmdNode head[] =
 {
     {"help", "There are some tips!", Help, &head[1]},
     {"list", "Listing useful files...", List, &head[2]},
     {"prod", "Producting the minest tree with Prim...", NULL, &head[3]},
+    {"check", "Choose file and have a check...", Check, &head[4]},
     {"quit", "Good Bye~", Quit, NULL}
 };
 
@@ -258,4 +260,23 @@ int Quit()
     printf("Press any key to continue...\n");
     system("pause");
     exit(0);
+}
+
+int Check()
+{
+    char filename[MAX_FILE_LEN];
+    printf("Please choose the file:");
+    scanf("%s",filename);
+
+    FILE *pfile=fopen(filename,"r");
+    char ch;
+
+    ch=fgetc(pfile);
+    while(ch!=EOF)
+    {
+        printf("%c",ch);
+        ch=fgetc(pfile);
+    }
+    printf("\n");
+    return 0;
 }

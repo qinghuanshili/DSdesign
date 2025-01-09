@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "dstest-H.h"
+#define NAME "qinghuanshili"//在此设置姓名
 /**************************************************************************************/
 /*          The Target File Must Be Named As dstestfile(Nov.).txt and be placed       */
 /*      at current director.                                                          */
@@ -33,20 +34,38 @@ static tcmdNode head[] =
 
 int main(void)
 {
-    int i=0,src=0,max=0;
+    int i=0,j=0,src=0,max=0;
     int temp1=0,temp2=0,temp3=0;
+    char ret;
     MGraph graph;
+
+    printf("Hello!Welcome to the menu!Enter \"help\" to learn more.\n");
     
     while(1)
     {
         clearGraph(&graph);//初始化
         FILE *pFile=menu();
-    
-        if(pFile==NULL){
-            perror("Fail in reading file");
-            return -1;
+
+        //错误处理————文件名错误
+        if(pFile==NULL)
+        {
+            perror("\e[1;31mWarning\e[0m:Fail in reading file.Maybe there is no such a file.\n");
+            continue;
         }
-    
+
+        //错误处理————空文件
+        ret=fgetc(pFile);
+        if(feof(pFile))
+        {
+            printf("\e[1;31mWaring\e[0m:It seems this is a empty file.\n");
+            fclose(pFile);
+            pFile=NULL;
+            continue;
+        }
+
+        rewind(pFile);//指针复位
+
+        i=0;j=0;//初始化
         while(1)
         {
             //赋值起点
@@ -70,12 +89,22 @@ int main(void)
                 //寻找所用的最大点，确定点数
                 max=(max>temp1)?max:temp1;
                 max=(max>temp2)?max:temp2;
+                j++;
             }
             if(feof(pFile)) break;
         }
 
         fclose(pFile);
         pFile=NULL;
+
+        //错误处理————文件中边数不够
+        if(j!=graph.numOfEdges)
+        {
+            printf("\e[1;31mWaring\e[0m:It seems there are some wrongs with the context of the file.\n");
+            fclose(pFile);
+            pFile=NULL;
+            continue;
+        }
 
         graph.numOfVex=max;//存入点数
 
@@ -178,20 +207,33 @@ void clearGraph(MGraph *graph)
 }
 
 FILE* menu()
-{
-    printf("Hello!Welcome to the menu!Enter \"help\" to learn more.\n");
-    
+{   
     /*Cmd Line begins*/
     while(1)
     {
         char filename[MAX_FILE_LEN];
 
-        printf("Input>>>");
+        //打印当前目录
+        system("chdir > temp.txt");
+        FILE *tp=fopen("temp.txt","r");
+        char c;
+        c=fgetc(tp);
+        while(c!='\n')
+        {
+            printf("\e[1;35m%c",c);
+            c=fgetc(tp);
+        }
+        fclose(tp);
+        tp=NULL;
+        system("del temp.txt");
+
+        printf("\e[0m@\e[1;36m%s\e[0m$\e[5mInput>>> \e[0m",NAME);
         char cmd[CMD_MAX_LEN];
         scanf("%s",cmd);
-        printf("\n");
+        
         tcmdNode* p=FindCmd(head,cmd);
 
+        //错误处理————指令错误
         if(p==NULL)
         {
             printf("Wrong Cmd!\n");
@@ -211,6 +253,8 @@ FILE* menu()
         {
             p->handler();
         }
+
+        printf("\n");
     }
 }
 
@@ -236,14 +280,14 @@ int Help()
 {
     printf("Menu List:\n");
     tcmdNode *p=head;
-    printf("+--------------------------------------------------------+");
+    printf("+---------------------------------------------------------+");
     while(p!=NULL)
     {
         printf("\n");
-        printf("|%s%52s|",p->cmd,p->desc);
+        printf("|%-5s%52s|",p->cmd,p->desc);
         p=p->next;
     }
-    printf("\n+--------------------------------------------------------+\n");
+    printf("\n+---------------------------------------------------------+\n");
 
     return 0;
 }
@@ -277,6 +321,9 @@ int Check()
         printf("%c",ch);
         ch=fgetc(pfile);
     }
+    fclose(pfile);
+    pfile=NULL;
+
     printf("\n");
     return 0;
 }

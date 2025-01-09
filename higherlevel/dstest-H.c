@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "dstest-H.h"
 /**************************************************************************************/
 /*          The Target File Must Be Named As dstestfile(Nov.).txt and be placed       */

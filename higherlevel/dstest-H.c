@@ -1,68 +1,93 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "dstest-H.h"
+/**************************************************************************************/
+/*          The Target File Must Be Named As dstestfile(Nov.).txt and be placed       */
+/*      at current director.                                                          */
+/*                                                                                    */
+/*      Auther:              20232401xpk                                              */
+/*      Date:                2025.1.9                                                 */
+/*      Language:            C                                                        */
+/**************************************************************************************/
 
+
+/*The defination of some functions*/
 Node* Prim(MGraph *graph, int src);
 void clearGraph(MGraph *graph);
+tcmdNode* FindCmd(tcmdNode* head,char *cmd);
 FILE* menu();
+int Help();
+int List();
+int Quit();
+
+static tcmdNode head[] =
+{
+    {"help", "There are some tips!", Help, &head[1]},
+    {"list", "Listing useful files...", List, &head[2]},
+    {"prod", "Producting the minest tree with Prim...", NULL, &head[3]},
+    {"quit", "Good Bye~", Quit, NULL}
+};
+
 int main(void)
 {
     int i=0,src=0,max=0;
     int temp1=0,temp2=0,temp3=0;
     MGraph graph;
     
-    clearGraph(&graph);//初始化
-
-    FILE *pFile;
-    pFile=fopen("dstestfile1.txt","r");
-    if(pFile==NULL){
-        perror("Fial in reading file");
-        return -1;
-    }
-    
-    while(true)
+    while(1)
     {
-        //赋值起点
-        if(i==0){
-            fscanf(pFile,"%d",&src);
-            i++;
+        clearGraph(&graph);//初始化
+        FILE *pFile=menu();
+    
+        if(pFile==NULL){
+            perror("Fail in reading file");
+            return -1;
         }
+    
+        while(1)
+        {
+            //赋值起点
+            if(i==0){
+                fscanf(pFile,"%d",&src);
+                i++;
+            }
 
-        //赋值边数
-        else if(i==1){
-            fscanf(pFile,"%d",&graph.numOfEdges);
-            i++;
-        }
+            //赋值边数
+            else if(i==1){
+                fscanf(pFile,"%d",&graph.numOfEdges);
+                i++;
+            }
         
-        else{
-            fscanf(pFile,"%d %d %d",&temp1,&temp2,&temp3);
-            //存入图中
-            graph.Edges[temp1-1][temp2-1]=temp3;
-            graph.Edges[temp2-1][temp1-1]=temp3;
+            else{
+                fscanf(pFile,"%d %d %d",&temp1,&temp2,&temp3);
+                //存入图中
+                graph.Edges[temp1-1][temp2-1]=temp3;
+                graph.Edges[temp2-1][temp1-1]=temp3;
 
-            //寻找所用的最大点，确定点数
-            max=(max>temp1)?max:temp1;
-            max=(max>temp2)?max:temp2;
+                //寻找所用的最大点，确定点数
+                max=(max>temp1)?max:temp1;
+                max=(max>temp2)?max:temp2;
+            }
+            if(feof(pFile)) break;
         }
-        if(feof(pFile)) break;
-    }
 
-    fclose(pFile);
-    pFile=NULL;
+        fclose(pFile);
+        pFile=NULL;
 
-    graph.numOfVex=max;//存入点数
+        graph.numOfVex=max;//存入点数
 
-    Node *node,*s;
-    node=Prim(&graph,src);
+        Node *node,*s;
+        node=Prim(&graph,src);
     
-    s=node->next;
-    while(s!=NULL)
-    {
-        if(s->next==NULL) printf("(%d,%d,%d)\n",s->x,s->y,s->weight);
-        else printf("(%d,%d,%d),",s->x,s->y,s->weight);
-        s=s->next;
+        s=node->next;
+        while(s!=NULL)
+        {
+            if(s->next==NULL) printf("(%d,%d,%d)\n",s->x,s->y,s->weight);
+            else printf("(%d,%d,%d),",s->x,s->y,s->weight);
+            s=s->next;
+        }
+        printf("\n");
     }
-
     system("pause");
     return 0;
 }
@@ -149,3 +174,87 @@ void clearGraph(MGraph *graph)
     }
 }
 
+FILE* menu()
+{
+    printf("Hello!Welcome to the menu!Enter \"help\" to learn more.\n");
+    
+    /*Cmd Line begins*/
+    while(1)
+    {
+        char filename[MAX_FILE_LEN];
+
+        printf("Input>>>");
+        char cmd[CMD_MAX_LEN];
+        scanf("%s",cmd);
+        printf("\n");
+        tcmdNode* p=FindCmd(head,cmd);
+
+        if(p==NULL)
+        {
+            printf("Wrong Cmd!\n");
+            continue;
+        }
+        printf("%s : %s\n",p->cmd,p->desc);
+        
+        if(p->cmd=="prod")
+        {
+            printf("Please choose the target file:");
+            scanf("%s",filename);
+            FILE *pfile1=fopen(filename,"r");
+            return pfile1;
+        }
+
+        else if(p->handler!=NULL)
+        {
+            p->handler();
+        }
+    }
+}
+
+tcmdNode* FindCmd(tcmdNode* head,char *cmd)
+{
+    if(head==NULL||cmd==NULL)
+    {
+        return NULL;
+    }
+    tcmdNode* p=head;
+    while(p!=NULL)
+    {
+        if(strcmp(p->cmd,cmd)==0)
+        {
+            return p;
+        }
+        p=p->next;
+    }
+    return NULL;
+}
+
+int Help()
+{
+    printf("Menu List:\n");
+    tcmdNode *p=head;
+    printf("+--------------------------------------------------------+");
+    while(p!=NULL)
+    {
+        printf("\n");
+        printf("|%s%52s|",p->cmd,p->desc);
+        p=p->next;
+    }
+    printf("\n+--------------------------------------------------------+\n");
+
+    return 0;
+}
+
+int List()
+{
+    printf("The target file must be named dstestfile(Nov).txt\n");
+    system("dir | findstr /r \"dstestfile[0-9]*.txt\"");
+    return 0;
+}
+
+int Quit()
+{
+    printf("Press any key to continue...\n");
+    system("pause");
+    exit(0);
+}

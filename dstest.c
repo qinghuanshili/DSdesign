@@ -23,7 +23,7 @@ void clearGraph(MGraph *graph);
 
 int main(void)
 {
-    char c,d,e;
+    
     int i=0,src=0,max=0;
     int temp1=0,temp2=0,temp3=0;
     MGraph graph;
@@ -37,7 +37,8 @@ int main(void)
         return -1;
     }
     
-    while(c!=EOF){
+    while(true)
+    {
         //赋值起点
         if(i==0){
             fscanf(pFile,"%d",&src);

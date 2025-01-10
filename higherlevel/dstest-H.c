@@ -97,7 +97,11 @@ int main(void)
         fclose(pFile);
         pFile=NULL;
 
-        //错误处理————文件中边数不够
+        if(graph.numOfEdges==0)
+        {
+            printf("\e[0;33mTips\e[0m:There is no tree because there is no edge.\n");
+        }
+        //错误处理————文件中实际边数与数据不符
         if(j!=graph.numOfEdges)
         {
             printf("\e[1;31mWaring\e[0m:It seems there are some wrongs with the context of the file.\n");
@@ -112,13 +116,14 @@ int main(void)
         node=Prim(&graph,src);
     
         s=node->next;
+        printf("\e[1;32mThe minest tree:\e[0m");
         while(s!=NULL)
         {
-            if(s->next==NULL) printf("(%d,%d,%d)\n",s->x,s->y,s->weight);
+            if(s->next==NULL) printf("(%d,%d,%d)",s->x,s->y,s->weight);
             else printf("(%d,%d,%d),",s->x,s->y,s->weight);
             s=s->next;
         }
-        printf("\n");
+        printf("\n\n");
     }
     system("pause");
     return 0;
@@ -239,7 +244,7 @@ FILE* menu()
             printf("Wrong Cmd!\n");
             continue;
         }
-        printf("%s : %s\n",p->cmd,p->desc);
+        printf("\e[1;34m%s\e[0m : %s\n",p->cmd,p->desc);
         
         if(p->cmd=="prod")
         {
@@ -294,7 +299,7 @@ int Help()
 
 int List()
 {
-    printf("The target file must be named dstestfile(Nov).txt\n");
+    printf("\e[1;34mThe target file must be named dstestfile(Nov).txt\e[0m\n");
     system("dir | findstr /r \"dstestfile[0-9]*.txt\"");
     return 0;
 }

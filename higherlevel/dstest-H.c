@@ -67,11 +67,13 @@ int main(void)
         rewind(pFile);//指针复位
 
         i=0;j=0;//初始化
+        max=0;
         while(1)
         {
             result1=1;
             result2=1;
             result3=1;
+            
             //赋值起点
             if(i==0){
                 result1=fscanf(pFile,"%d",&src);
@@ -113,6 +115,7 @@ int main(void)
         if(graph.numOfEdges==0)
         {
             printf("\e[0;33mTips\e[0m:There is no tree because there is no edge.\n\n");
+            continue;
         }
         //错误处理————文件中实际边数与数据不符
         if(j!=graph.numOfEdges)
@@ -128,9 +131,9 @@ int main(void)
     
         s=node->next;
         printf("\e[1;32mThe minest tree:\e[0m");
-        while(s!=NULL)
+        for(j=0;j<graph.numOfVex-1;j++)
         {
-            if(s->next==NULL) printf("(%d,%d,%d)",s->x,s->y,s->weight);
+            if(j==graph.numOfVex-2) printf("(%d,%d,%d)",s->x,s->y,s->weight);
             else printf("(%d,%d,%d),",s->x,s->y,s->weight);
             s=s->next;
         }

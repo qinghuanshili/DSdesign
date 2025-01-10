@@ -37,6 +37,7 @@ int main(void)
     int i=0,j=0,src=0,max=0;
     int temp1=0,temp2=0,temp3=0;
     char ret;
+    int result1=0,result2=0,result3=0;
     MGraph graph;
 
     printf("Hello!Welcome to the menu!Enter \"help\" to learn more.\n");
@@ -70,18 +71,20 @@ int main(void)
         {
             //赋值起点
             if(i==0){
-                fscanf(pFile,"%d",&src);
+                int result1=fscanf(pFile,"%d",&src);
+                
                 i++;
             }
+        
 
             //赋值边数
             else if(i==1){
-                fscanf(pFile,"%d",&graph.numOfEdges);
+                result2=fscanf(pFile,"%d",&graph.numOfEdges);
                 i++;
             }
         
             else{
-                fscanf(pFile,"%d %d %d",&temp1,&temp2,&temp3);
+                result3=fscanf(pFile,"%d %d %d",&temp1,&temp2,&temp3);
                 //存入图中
                 graph.Edges[temp1-1][temp2-1]=temp3;
                 graph.Edges[temp2-1][temp1-1]=temp3;
@@ -92,6 +95,12 @@ int main(void)
                 j++;
             }
             if(feof(pFile)) break;
+            //错误处理————文件无法识别
+            if(result1==0||result2==0||result3==0)
+            {
+                graph.numOfEdges=65535;
+                break;
+            }
         }
 
         fclose(pFile);
@@ -99,12 +108,12 @@ int main(void)
 
         if(graph.numOfEdges==0)
         {
-            printf("\e[0;33mTips\e[0m:There is no tree because there is no edge.\n");
+            printf("\e[0;33mTips\e[0m:There is no tree because there is no edge.\n\n");
         }
         //错误处理————文件中实际边数与数据不符
         if(j!=graph.numOfEdges)
         {
-            printf("\e[1;31mWaring\e[0m:It seems there are some wrongs with the context of the file.\n");
+            printf("\e[1;31mWaring\e[0m:It seems there are some wrongs with the context of the file.\n\n");
             continue;
         }
 

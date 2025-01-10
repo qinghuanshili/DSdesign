@@ -94,13 +94,14 @@ int main(void)
                 max=(max>temp2)?max:temp2;
                 j++;
             }
-            if(feof(pFile)) break;
+            
             //错误处理————文件无法识别
             if(result1==0||result2==0||result3==0)
             {
                 graph.numOfEdges=65535;
                 break;
             }
+            if(feof(pFile)) break;
         }
 
         fclose(pFile);

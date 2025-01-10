@@ -69,9 +69,12 @@ int main(void)
         i=0;j=0;//初始化
         while(1)
         {
+            result1=1;
+            result2=1;
+            result3=1;
             //赋值起点
             if(i==0){
-                int result1=fscanf(pFile,"%d",&src);
+                result1=fscanf(pFile,"%d",&src);
                 
                 i++;
             }
@@ -217,6 +220,8 @@ void clearGraph(MGraph *graph)
             graph->Edges[i][j]=0;
         }
     }
+    graph->numOfEdges=0;
+    graph->numOfVex=0;
 }
 
 FILE* menu()

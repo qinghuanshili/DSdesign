@@ -105,8 +105,6 @@ int main(void)
         if(j!=graph.numOfEdges)
         {
             printf("\e[1;31mWaring\e[0m:It seems there are some wrongs with the context of the file.\n");
-            fclose(pFile);
-            pFile=NULL;
             continue;
         }
 
@@ -131,7 +129,7 @@ int main(void)
 
 Node* Prim(MGraph *graph,int src)
 {
-    int i=0,j=0,min=0,flag2=0;
+    int i=0,j=0,min=0;
     Closedge closedge;
     Node *node;//头指针
     Node *s;
